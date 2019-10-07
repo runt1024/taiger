@@ -1,0 +1,280 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+constexpr auto N = 500000;
+int main()
+{
+	srand(time(NULL));
+	clock_t begin1, end1, begin2, end2, begin3, end3,begin4,end4,begin5,end5;
+	double cost1,cost2,cost3,cost4,cost5;
+	void sort(int a[N]);
+	void sort2(int a[N]);
+	void qsort(int a[N], int l, int r);
+	void mergesort(int* A, int n);
+	//void mergesort(int a[N], int l, int r);
+	void heapsort(int a[N], int n);
+	int a[N],s[N];
+	for (int i = 0; i < N; i++)
+		a[i] = rand();
+	for (int i = 0; i < N; i++)
+		s[i] = a[i];
+	begin1 = clock();
+	sort(a);
+	end1 = clock();
+	for (int i = 0; i < N; i++)
+		a[i] = s[i];
+	begin2 = clock();
+	sort2(a);
+	end2 = clock();
+
+	for (int i = 0; i < N; i++)
+		a[i] = s[i];
+	begin3 = clock();
+	qsort(a, 0, N-1);
+	end3 = clock();
+	for (int i = 0; i < N; i++)
+		a[i] = s[i];
+	begin4 = clock();
+	mergesort(a,N - 1);
+	end4 = clock();
+	//for (int i = 0; i < N; i++)
+		//printf("%d ", a[i]);
+	printf("\n");
+
+	begin5 = clock();
+	heapsort(a, N - 1);
+	end5 = clock();
+
+	
+	cost1 = (double)(end1 - begin1) / CLOCKS_PER_SEC;
+	cost2 = (double)(end2 - begin2) / CLOCKS_PER_SEC;
+	cost3 = (double)(end3 - begin3) / CLOCKS_PER_SEC;
+	cost4 = (double)(end4 - begin4) / CLOCKS_PER_SEC;
+	cost5 = (double)(end5 - begin5) / CLOCKS_PER_SEC;
+	printf("1constant CLOCKS_PER_SEC is: %ld, time cost is: %lf secs\n", CLOCKS_PER_SEC, cost1);
+	printf("%lf\n%lf\n%lf\n%lf\n", cost2,cost3,cost4,cost5);
+	return 0;
+}
+
+void sort(int a[N])
+{
+	int m;
+	for (int i = 0; i < N-1; i++)
+	{
+		for (int j = i + 1; j < N; j++)
+		{
+			if(a[i]>a[j]){m=a[i];a[i]=a[j];a[j]=m;}
+		}
+	}
+
+}
+
+void sort2(int a[N])
+{
+	int m;
+	for (int i = 0; i < N; i++)
+	{
+		for(int j=i;j<N;j++)
+		{
+			if (a[j] < a[i])
+			{
+				m = a[j];
+				a[j] = a[i];
+				a[i] = m;
+			}
+		}
+	}
+}
+
+void qsort(int a[N],int l,int r)
+{
+	int i = l, j = r,k=(l+r)/2,z;
+	int y = a[k]; //where k is randomly chosen from[l, r];
+	while (i <= j) 
+	{
+		while (a[i] < y) i++;
+		while (y < a[j]) j--;
+		if (i <= j) 
+		{
+			z = a[i];
+			a[i] = a[j];
+			a[j] = z;
+			i = i++; j = j--;
+		}
+	}
+	if (l < j) qsort(a, l, j);
+	if (i < r) qsort(a, i, r);
+}
+
+
+
+/*void mergesort(int a[N],int l,int r)
+{
+	void merge(int a[], int l1, int r1, int b[], int l2, int r2, int c[]);
+	int k, b[N];
+	if (l < r) 
+	{
+		k = (l + r) / 2;
+		mergesort(a, l, k);
+		mergesort(a, k + 1, r);
+		merge(a, l, k, a, k + 1, r, b);
+		for (int i = 0; i < N; i++)
+			a[i] = b[i];
+	}
+}
+
+void merge(int a[],int l1,int r1,int b[],int l2,int r2,int c[])
+{
+	int i = l1,j = l2,k = 0;
+	while ((i <= r1) && (j <= r2)) 
+	{
+		if (a[i] < b[j]) 
+		{
+			c[k] = a[i];
+			i++;
+		}
+		else 
+		{
+			c[k] = b[j];
+			j++;
+		}
+		k++;
+	}
+	while (i <= r1) 
+	{
+		c[k] = a[i];
+		i++;
+		k++;
+	}
+	while (j <= r2) {
+		c[k] = b[j];
+		j = j++;
+		k = k++;
+	}
+}*/
+
+/*void merge(int a[], int b[], int leftCount, int c[], int rightCount) {
+	int i, j, k;
+
+	// i - to mark the index of left aubarray (L)
+	// j - to mark the index of right sub-raay (R)
+	// k - to mark the index of merged subarray (A)
+	i = 0; j = 0; k = 0;
+
+	while (i < leftCount && j < rightCount) {
+		if (b[i] < c[j]) a[k++] = b[i++];
+		else a[k++] = c[j++];
+	}
+	while (i < leftCount) a[k++] =b[i++];
+	while (j < rightCount) a[k++] = c[j++];
+}*/
+
+
+
+void heapsort(int a[N], int n)
+{
+	void sift(int a[], int  r, int n);
+	int l = n / 2,m,y;
+	while (l > 0) 
+	{
+		sift(a, l, n);
+		l--;
+	}
+	m = n;
+	while (m > 0) {
+		y = a[1]; a[1] = a[m]; a[m] = y;
+		m--; 
+		sift(a, 1, m);
+	}
+}
+
+
+/*void heapsort(int a[], int n)
+{
+	int temp, i, j;
+	void sift(int a[], int  r, int n);
+	for (i = n / 2; i > 0; i--)//通过循环初始化顶堆
+	{
+		sift(a, i, n);
+	}
+	for (i = n; i > 0; i--)
+	{
+		temp = a[1];
+		a[1] = a[i];
+		a[i] = temp;//将堆顶记录与未排序的最后一个记录交换
+		sift(a, 1, i - 1);//重新调整为顶堆
+	}
+}*/
+
+/*void sift(int a[],int  r,int n)
+{
+	int i = r, j = 2 * i, x = a[i], m,p;
+	while (j <= n) 
+	{
+		if (j < n)
+			if (a[j] < a[j] + 1) j = j + 1;
+		if (x >= a[j]) break;
+		m = a[j];
+		a[j] = a[i];
+		a[i] = m;
+		i = j;
+		j = 2 * i;
+	}
+	a[i] = x;
+}*/
+
+void sift(int a[], int i, int m)//一次筛选的过程
+{
+	int x, j;
+	x = a[i];
+	for (j = 2 * i; j <= m; j = j * 2)//通过循环沿较大的孩子结点向下筛选
+	{
+		if (j < m && a[j] < a[j + 1]) j++;//j为较大的记录的下标
+		if (x > a[j]) break;
+		a[i] = a[j];i = j;
+	}
+	a[i] = x;//插入
+}
+
+
+
+void Merge(int* A, int* L, int leftCount, int* R, int rightCount) {
+	int i, j, k;
+
+	// i - to mark the index of left aubarray (L)
+	// j - to mark the index of right sub-raay (R)
+	// k - to mark the index of merged subarray (A)
+	i = 0; j = 0; k = 0;
+
+	while (i < leftCount && j < rightCount) {
+		if (L[i] < R[j]) A[k++] = L[i++];
+		else A[k++] = R[j++];
+	}
+	while (i < leftCount) A[k++] = L[i++];
+	while (j < rightCount) A[k++] = R[j++];
+}
+
+// Recursive function to sort an array of integers.
+void mergesort(int* A, int n) {
+	int mid, i, * L, * R;
+	void Merge(int* A, int* L, int leftCount, int* R, int rightCount);
+	if (n < 2) return; // base condition. If the array has less than two element, do nothing.
+
+	mid = n / 2;  // find the mid index.
+
+	// create left and right subarrays
+	// mid elements (from index 0 till mid-1) should be part of left sub-array
+	// and (n-mid) elements (from mid to n-1) will be part of right sub-array
+	L = new int[mid];
+	R = new int[n - mid];
+
+	for (i = 0; i < mid; i++) L[i] = A[i]; // creating left subarray
+	for (i = mid; i < n; i++) R[i - mid] = A[i]; // creating right subarray
+
+	mergesort(L, mid);  // sorting the left subarray
+	mergesort(R, n - mid);  // sorting the right subarray
+	Merge(A, L, mid, R, n - mid);  // Merging L and R into A as sorted list.
+	// the delete operations is very important
+	delete[] R;
+	delete[] L;
+}
